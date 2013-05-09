@@ -451,7 +451,7 @@ ColVis.prototype = {
 			{
 				if ( aoColumns[i].bVisible )
 				{
-					$('input', this.dom.buttons[i]).attr('checked','checked');
+					$('input', this.dom.buttons[i]).prop('checked','checked');
 				}
 				else
 				{
