@@ -35,7 +35,7 @@ DATATABLEWIDGET.DataController = function () {
 		dataTable = $('#datatable').dataTable({
             "aaData": data.data,
             "aoColumns": columns,
-			"sDom": 'C<"clear">lfrtip'
+			"sDom": 'C<"clear">Rlfrtip'
         });
 	}
 	
