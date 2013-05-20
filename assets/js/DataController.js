@@ -28,7 +28,8 @@ DATATABLEWIDGET.DataController = function () {
 		}
 		
 		for (i = 0; i < data.columns.length; i += 1) {
-			columns.push({"sTitle" : data.columns[i]});
+			// This works because setting bVisible to undefined is equivalent to true not false
+			columns.push({"sTitle" : data.columns[i].title, "bVisible": data.columns[i].visible});		
 		}
 		
 		dataTable = $('#datatable').dataTable({

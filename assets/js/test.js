@@ -7,9 +7,15 @@ OWF.ready(function() {
 			    ["2", "cats", "purrs"]
 			  ],
 			  columns: [
-			    "number",
-			    "animal",
-			    "action"
+			    {
+				  "title": "number", "visible": false
+				},
+			    {
+				  "title": "animal"
+				},
+				{
+			      "title": "action"
+			    }
 			  ]
 			};
 			// if ($("#eventRadio").is(':checked')) {
