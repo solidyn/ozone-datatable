@@ -70,8 +70,20 @@ DATATABLEWIDGET.DataController = function () {
 		dataTable = $('#datatable').dataTable({
             "aaData": massagedData,
             "aoColumns": columns,
-			"sDom": 'C<"clear">Rlfrtip',
-			"sPaginationType": "bootstrap"
+			"sDom": 'TC<"clear">Rlfrtip',
+			"sPaginationType": "bootstrap",
+			"oTableTools": {
+				"sSwfPath": "assets/js/lib/datatables/extras/TableTools/swf/copy_csv_xls_pdf.swf",
+				"aButtons": [
+					"copy",
+					"print",
+					{
+						"sExtends":    "collection",
+						"sButtonText": "Save",
+						"aButtons":    [ "csv", "xls", "pdf" ]
+					}
+				]
+			}
         });
 
 		$(".details-toggle").click(function() {
