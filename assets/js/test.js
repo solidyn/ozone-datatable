@@ -4,7 +4,26 @@ OWF.ready(function() {
 			var data = {
 			  data: [
 			    ["1", "dog", "runs"],
-			    ["2", "cats", "purrs"]
+			    ["2", "cats", "purrs"],
+			    ["7", "birds", "squawk", {
+					data: [
+						["red", "hawk"],
+						["blue", "jay"],
+						["yellow", "finch"],
+						["green", "parrot"],
+						["black", "crow"],
+						["white", "seagull"],
+						["golden", "eagle"]
+					],
+					columns: [
+						{
+							title: "color"
+						},
+						{
+							title: "species"
+						}
+					]
+				}]
 			  ],
 			  columns: [
 			    {
@@ -15,22 +34,21 @@ OWF.ready(function() {
 				},
 				{
 			      "title": "action"
-			    }
+			    },
+				{
+				  "type": "associatedData"
+				}
 			  ]
 			};
-			// if ($("#eventRadio").is(':checked')) {
-			// 		OWF.Eventing.publish("com.solidyn.universe-commands", data);
-			// 	} else {
-				OWF.Intents.startActivity(
-		            {
-		                action:'addData', dataType:'application/com.solidyn.tabledata'
-		            },
-					data,
-		            function (dest) {
+			OWF.Intents.startActivity(
+	            {
+	                action:'addData', dataType:'application/com.solidyn.tabledata'
+	            },
+				data,
+	            function (dest) {
 
-		            }
-		        );
-			//}
+	            }
+	        );
 		});
 	});
 });
