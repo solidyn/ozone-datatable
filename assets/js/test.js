@@ -39,7 +39,8 @@ OWF.ready(function() {
 				{
 				  "type": "associatedData"
 				}
-			  ]
+			  ],
+			  style: "font-size: 20px"
 			};
 			OWF.Intents.startActivity(
 	            {

@@ -86,6 +86,11 @@ DATATABLEWIDGET.DataController = function () {
 			}
         });
 
+		if (data.style) {
+			$("table").attr("style", data.style);
+		}
+		
+
 		$(".details-toggle").click(function() {
 			var nTr = $(this).parents('tr')[0];
 		    if (dataTable.fnIsOpen(nTr)) {
