@@ -4,5 +4,25 @@ title:
 ---
 <div id="row">
 	<h1 id="no-data">No data added yet</h1>
+	
 	<table id="datatable" class="table table-bordered" display="none"></table>
+	
+	<div id="context-menu">
+		<ul class="dropdown-menu" role="menu">
+			<li><a tabindex="-1" href="#">Color By</a></li>
+		</ul>
+	</div>
+	
+	<div id="column-selector-modal" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			    <h3>Select Column</h3>
+		</div>
+		<div id="columns-selector" class="modal-body">
+		</div>
+		<div class="modal-footer">
+		    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		    <button id="select-column-button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Select</button>
+		</div>
+	</div>
 </div>

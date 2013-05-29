@@ -4,6 +4,7 @@ var OWF = OWF || null;
 DATATABLEWIDGET.DataController = function () {
 	var dataTable = null,
 		displayedData;
+
 	function initialize () {
 		OWF.Intents.receive(
             {
@@ -34,6 +35,50 @@ DATATABLEWIDGET.DataController = function () {
 		return "<table id='details_" + table_id + "'></table>";
 	}
 	
+	function initializeSubTable(associatedDataTableColumn) {
+		$(".details-toggle").click(function() {
+			var nTr = $(this).parents('tr')[0];
+		    if (dataTable.fnIsOpen(nTr)) {
+                /* This row is already open - close it */
+                this.src = "assets/img/details_open.png";
+                dataTable.fnClose(nTr);
+            }
+            else {
+                /* Open this row */
+                this.src = "assets/img/details_close.png";
+				var id = $(this).attr("id");
+                dataTable.fnOpen(nTr, formatSubTable(id), 'details');
+
+				var subTableColumns = [];
+				for (var j = 0; j < displayedData[id][associatedDataTableColumn].columns.length; j += 1) {
+					subTableColumns.push({"sTitle": displayedData[id][associatedDataTableColumn].columns[j].title});
+				}
+				
+				$("#details_" + id).dataTable({
+					"aaData": displayedData[id][associatedDataTableColumn].data,
+					"aoColumns": subTableColumns,
+					"sDom": 'C<"clear">Rlfrtip',
+					"sPaginationType": "bootstrap"
+				});
+            }	
+		});
+	}
+	
+    function initializeContextMenu() {
+		$('tbody').contextmenu({
+		    target: '#context-menu',
+		    onItem: function(e, item) {
+		    	if($(item).text() === "Color By") {
+					$('#column-selector-modal').modal();
+				}
+		    }
+		 });
+
+		$("#select-column-button").click(function() {
+			var selectedColumnValue = $('input[name=column-options]:checked').val();
+		});
+	}
+	
 	function addData (data) {
 		var i,
             columns = [],
@@ -51,6 +96,7 @@ DATATABLEWIDGET.DataController = function () {
 			if (data.columns[i].type !== "associatedData") {
 				// This works because setting bVisible to undefined is equivalent to true not false
 				columns.push({"sTitle" : data.columns[i].title, "bVisible": data.columns[i].visible});		
+				$("#columns-selector").append("<label class='radio'><input type='radio' name='column-options' value='" + data.columns[i].title + "'>" + data.columns[i].title + "</label>")
 			} else {
 				// Puts an untitled column in the first spot where the plus/minus icon will go
 				columns.unshift({"sTitle" : ""});
@@ -90,38 +136,8 @@ DATATABLEWIDGET.DataController = function () {
 			$("table").attr("style", data.style);
 		}
 		
-
-		$(".details-toggle").click(function() {
-			var nTr = $(this).parents('tr')[0];
-		    if (dataTable.fnIsOpen(nTr)) {
-                /* This row is already open - close it */
-                this.src = "assets/img/details_open.png";
-                dataTable.fnClose(nTr);
-            }
-            else {
-                /* Open this row */
-                this.src = "assets/img/details_close.png";
-				var id = $(this).attr("id");
-                dataTable.fnOpen(nTr, formatSubTable(id), 'details');
-
-				var subTableColumns = [];
-				for (var j = 0; j < displayedData[id][associatedDataTableColumn].columns.length; j += 1) {
-					subTableColumns.push({"sTitle": displayedData[id][associatedDataTableColumn].columns[j].title});
-				}
-				
-				$("#details_" + id).dataTable({
-					"aaData": displayedData[id][associatedDataTableColumn].data,
-					"aoColumns": subTableColumns,
-					"sDom": 'C<"clear">Rlfrtip',
-					"sPaginationType": "bootstrap"
-				});
-                // oInnerTable = $("#exampleTable_" + iTableCounter).dataTable({
-                //                     "bJQueryUI": true,
-                //                     "sPaginationType": "full_numbers"
-                //                 });
-                //                 iTableCounter = iTableCounter + 1;
-            }	
-		});
+		initializeSubTable(associatedDataTableColumn);
+		initializeContextMenu();
 	}
 	
 	initialize();
