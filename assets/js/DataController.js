@@ -91,14 +91,19 @@ DATATABLEWIDGET.DataController = function () {
 		});
 	}
 	
-	function populateColorByDialog(data, associatedDataTableColumn) {
-		$("#columns-selector").empty();
+	function populateSelectColumnDiv(div, data, associatedDataTableColumn) {
+		$("#" + div).empty();
 		for (var i = 0; i < data.columns.length; i += 1) {
 			if (i !== associatedDataTableColumn - 1) {
 				var columnIndex = associatedDataTableColumn > -1 ? i + 1 : i;
-				$("#columns-selector").prepend("<label class='radio'><input column='" + columnIndex + "' type='radio' name='column-options' value='" + data.columns[i].title + "'>" + data.columns[i].title + "</label>")	
+				$("#" + div).prepend("<label class='radio'><input column='" + columnIndex + "' type='radio' name='column-options' value='" + data.columns[i].title + "'>" + data.columns[i].title + "</label>")	
 			}
 		}
+	}
+	
+	function populateColorByDialog(data, associatedDataTableColumn) {
+		populateSelectColumnDiv("color-by-columns-selector", data, associatedDataTableColumn);
+		$("#color-by-columns-selector").empty();
 		
 		$("#color-bins tbody").empty();
 		for (var i = 0; i < colorBins.length; i += 1) {
@@ -112,7 +117,7 @@ DATATABLEWIDGET.DataController = function () {
 		}
 		$('.color').colorpicker();
 
-		$("#select-column-button").click(function() {
+		$("#color-by-button").click(function() {
 			var selectedColumn = $('input[name=column-options]:checked').val();
 			
 			for (var i = 0; i < colorBins.length; i += 1) {
@@ -130,13 +135,18 @@ DATATABLEWIDGET.DataController = function () {
 		$('#datatable tbody').contextmenu({
 		    target: '#context-menu',
 		    onItem: function(e, item) {
-		    	if($(item).text() === "Color By") {
+			    var selectedOption = $(item).text();
+		    	if (selectedOption === "Color By") {
+					$('#color-by-modal').modal();
+				} else if (selectedOption === "Histogram") {
 					$('#column-selector-modal').modal();
 				}
 		    }
 		 });
 
 		 populateColorByDialog(data, associatedDataTableColumn);
+		 populateSelectColumnDiv("column-selector", data, associatedDataTableColumn); 
+		 populateSelectColumnDialog(data, associatedDataTableColumn);
 	}
 	
 	function appyColorBinsToColumn(columnTitle) {
