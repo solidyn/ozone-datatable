@@ -91,17 +91,8 @@ DATATABLEWIDGET.DataController = function () {
 		});
 	}
 	
-    function initializeContextMenu(data, associatedDataTableColumn) {
-
-		$('#datatable tbody').contextmenu({
-		    target: '#context-menu',
-		    onItem: function(e, item) {
-		    	if($(item).text() === "Color By") {
-					$('#column-selector-modal').modal();
-				}
-		    }
-		 });
-
+	function populateColorByDialog(data, associatedDataTableColumn) {
+		$("#columns-selector").empty();
 		for (var i = 0; i < data.columns.length; i += 1) {
 			if (i !== associatedDataTableColumn - 1) {
 				var columnIndex = associatedDataTableColumn > -1 ? i + 1 : i;
@@ -109,6 +100,7 @@ DATATABLEWIDGET.DataController = function () {
 			}
 		}
 		
+		$("#color-bins tbody").empty();
 		for (var i = 0; i < colorBins.length; i += 1) {
 			$("#color-bins tbody").append("<tr> \
 				<td><div class='input-append color' data-color='" + colorBins[i].color + "' data-color-format='hex'> \
@@ -131,6 +123,20 @@ DATATABLEWIDGET.DataController = function () {
 			
 			appyColorBinsToColumn(selectedColumn);
 		});
+	}
+	
+    function initializeContextMenu(data, associatedDataTableColumn) {
+
+		$('#datatable tbody').contextmenu({
+		    target: '#context-menu',
+		    onItem: function(e, item) {
+		    	if($(item).text() === "Color By") {
+					$('#column-selector-modal').modal();
+				}
+		    }
+		 });
+
+		 populateColorByDialog(data, associatedDataTableColumn);
 	}
 	
 	function appyColorBinsToColumn(columnTitle) {
