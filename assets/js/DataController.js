@@ -142,6 +142,8 @@ DATATABLEWIDGET.DataController = function () {
 				
 				if (color) {
 					$(cell).css("background-color", color);	
+				} else {
+					$(cell).css("background-color", "");
 				}
 			});	
 		}
