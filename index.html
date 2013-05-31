@@ -2,15 +2,19 @@
 layout: default
 title: 
 ---
-<div id="row">
+<div class="row">
 	<h1 id="no-data">No data added yet</h1>
 	
 	<table id="datatable" class="table table-bordered" display="none"></table>
-	
+</div>
+<div class="row">
+	<div id="countByChart"></div>
+</div>
+
 	<div id="context-menu">
 		<ul class="dropdown-menu" role="menu">
 			<li><a tabindex="-1" href="#">Color By</a></li>
-			<li><a tabindex="-1" href="#">Histogram</a></li>
+			<li><a tabindex="-1" href="#">Count By</a></li>
 		</ul>
 	</div>
 	
@@ -60,4 +64,3 @@ title:
 		    <button id="color-by-button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Select</button>
 		</div>
 	</div>
-</div>

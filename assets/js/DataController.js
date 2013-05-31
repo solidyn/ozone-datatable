@@ -30,7 +30,8 @@ DATATABLEWIDGET.DataController = function () {
 				min: 40,
 				max: 50
 			}
-		];
+		],
+		countByPlot;
 
 	function initialize () {
 		OWF.Intents.receive(
@@ -102,8 +103,8 @@ DATATABLEWIDGET.DataController = function () {
 	}
 	
 	function populateColorByDialog(data, associatedDataTableColumn) {
-		populateSelectColumnDiv("color-by-columns-selector", data, associatedDataTableColumn);
 		$("#color-by-columns-selector").empty();
+		populateSelectColumnDiv("color-by-columns-selector", data, associatedDataTableColumn);
 		
 		$("#color-bins tbody").empty();
 		for (var i = 0; i < colorBins.length; i += 1) {
@@ -138,7 +139,7 @@ DATATABLEWIDGET.DataController = function () {
 			    var selectedOption = $(item).text();
 		    	if (selectedOption === "Color By") {
 					$('#color-by-modal').modal();
-				} else if (selectedOption === "Histogram") {
+				} else if (selectedOption === "Count By") {
 					$('#column-selector-modal').modal();
 				}
 		    }
@@ -146,13 +147,12 @@ DATATABLEWIDGET.DataController = function () {
 
 		 populateColorByDialog(data, associatedDataTableColumn);
 		 populateSelectColumnDiv("column-selector", data, associatedDataTableColumn); 
-		 populateSelectColumnDialog(data, associatedDataTableColumn);
 	}
 	
 	function appyColorBinsToColumn(columnTitle) {
 		var index = $("#datatable tr th:contains('" + columnTitle + "')").index();
 		if (index > -1) {
-			$("#datatable tbody").find('tr').each(function (){
+			$("#datatable tbody").find('tr').each(function () {
 				var cell = $(this).children('td').get(index),
 				    color = findBinForValue(parseFloat($(cell).html()));
 				
@@ -172,6 +172,63 @@ DATATABLEWIDGET.DataController = function () {
 			}
 		}
 		return
+	}
+	
+	function registerCountByClickHandler() {
+		$("#select-column-button").click(function () {
+			var selectedColumn = $('#column-selector input[name=column-options]:checked').val();
+			// create a map for each value in the column to how many times it exists
+			var index = $("#datatable tr th:contains('" + selectedColumn + "')").index();
+			var countMap = {};
+			
+			if (index > -1) {
+				$("#datatable tbody").find('tr').each(function () {
+					var cell = $(this).children('td').get(index),
+					    value = $(cell).html();
+					
+					countMap[value] ? countMap[value] += 1 : countMap[value] = 1;
+				});
+			}
+			var ticks = [],
+				values = [];
+				
+			for (var tick in countMap) {
+				ticks.push(tick);
+				values.push(countMap[tick]);
+			}
+			
+			// Delete the graph if it exists already
+			if (countByPlot) {
+				countByPlot.destroy();
+			}
+			
+			countByPlot = $.jqplot('countByChart', [values], {
+		        // The "seriesDefaults" option is an options object that will
+		        // be applied to all series in the chart.
+		        seriesDefaults:{
+		            renderer:$.jqplot.BarRenderer,
+		            rendererOptions: {fillToZero: true}
+		        },
+		        axes: {
+		            // Use a category axis on the x axis and use our custom ticks.
+		            xaxis: {
+		                renderer: $.jqplot.CategoryAxisRenderer,
+		                ticks: ticks
+		            },
+		            // Pad the y axis just a little so bars can get close to, but
+		            // not touch, the grid boundaries.  1.2 is the default padding.
+		            yaxis: {
+		                pad: 1.05,
+						tickInterval: 1,
+						min: 0,
+		                tickOptions: {
+						}
+		            }
+		        }
+		    });
+			
+			console.log("countMap: " + JSON.stringify(countMap));
+		});
 	}
 	
 	function addData (data) {
@@ -232,6 +289,7 @@ DATATABLEWIDGET.DataController = function () {
 		
 		initializeSubTable(associatedDataTableColumn);
 		initializeContextMenu(data, associatedDataTableColumn);
+		registerCountByClickHandler();
 	}
 	
 	initialize();

@@ -5,6 +5,7 @@ OWF.ready(function() {
 			  data: [
 			    ["1", "dog", "runs"],
 			    ["2", "cats", "purrs"],
+				["5", "cats", "scratch"],
 				["9", "reptiles", "<a href='http://google.com' target='_blank'>hiss<a>"],
 			    ["7", "birds", "squawk", {
 					data: [
