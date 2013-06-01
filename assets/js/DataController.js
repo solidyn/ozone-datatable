@@ -31,7 +31,8 @@ DATATABLEWIDGET.DataController = function () {
 				max: 50
 			}
 		],
-		countByPlot;
+		countByPlot,
+		columnSelectDialogMode;
 
 	function initialize () {
 		OWF.Intents.receive(
@@ -139,9 +140,10 @@ DATATABLEWIDGET.DataController = function () {
 			    var selectedOption = $(item).text();
 		    	if (selectedOption === "Color By") {
 					$('#color-by-modal').modal();
-				} else if (selectedOption === "Count By") {
+				} else if (selectedOption === "Count By" || selectedOption === "Histogram") {
+					columnSelectDialogMode = selectedOption;
 					$('#column-selector-modal').modal();
-				}
+				} 
 		    }
 		 });
 
@@ -174,8 +176,88 @@ DATATABLEWIDGET.DataController = function () {
 		return
 	}
 	
+	function registerHistogramClickHandler() {
+		$("#select-column-button").click(function () {
+			if (columnSelectDialogMode !== "Histogram") {
+				return;
+			}
+			
+			var selectedColumn = $('#column-selector input[name=column-options]:checked').val();
+			
+			// Count the total number of values and sort them in an array
+			var index = $("#datatable tr th:contains('" + selectedColumn + "')").index();
+			var sortedData = [];
+			var rows = $("#datatable tbody").find('tr');
+			var numDataPoints = rows.length;
+			
+			if (index > -1) {
+				$("#datatable tbody").find('tr').each(function () {
+					var cell = $(this).children('td').get(index);
+					sortedData.push(parseFloat($(cell).html()));					
+				});
+				sortedData.sort(function(a,b){return a - b})
+			}
+			
+			// now find out how many values are in each bin
+			var numBins = Math.ceil(Math.sqrt(numDataPoints)),
+			    minValue = sortedData[0],
+				maxValue = sortedData[sortedData.length -1],
+				range = maxValue - minValue,
+				binSize = range / numBins,
+				binNumber = 0,
+				binMap = {};
+				
+			for (var i = 0; i < sortedData.length; i += 1) {
+				if (sortedData[i] > minValue + (binNumber + 1) * binSize) {
+					binNumber += 1;
+				}
+				binMap[binNumber] ? binMap[binNumber] += 1 : binMap[binNumber] = 1;
+			}
+			
+			var ticks = [],
+				values = [];
+			
+			for (var tick in binMap) {
+				ticks.push(Math.floor(((minValue + tick * binSize + (binSize/2)) * 10)) / 10);
+				values.push(binMap[tick]);
+			}
+			
+			// Delete the graph if it exists already
+			if (countByPlot) {
+				countByPlot.destroy();
+			}
+			
+			countByPlot = $.jqplot('countByChart', [values], {
+		        // The "seriesDefaults" option is an options object that will
+		        // be applied to all series in the chart.
+		        seriesDefaults:{
+		            renderer:$.jqplot.BarRenderer,
+		            rendererOptions: {fillToZero: true,
+					barMargin: 3}
+		        },
+		        axes: {
+		            // Use a category axis on the x axis and use our custom ticks.
+		            xaxis: {
+		                renderer: $.jqplot.CategoryAxisRenderer,
+		                ticks: ticks
+		            },
+		            // Pad the y axis just a little so bars can get close to, but
+		            // not touch, the grid boundaries.  1.2 is the default padding.
+		            yaxis: {
+		                pad: 1.05,
+						tickInterval: 1,
+						min: 0
+		            }
+		        }
+		    });
+		});
+	}
+	
 	function registerCountByClickHandler() {
 		$("#select-column-button").click(function () {
+			if (columnSelectDialogMode !== "Count By") {
+				return;
+			}
 			var selectedColumn = $('#column-selector input[name=column-options]:checked').val();
 			// create a map for each value in the column to how many times it exists
 			var index = $("#datatable tr th:contains('" + selectedColumn + "')").index();
@@ -290,6 +372,7 @@ DATATABLEWIDGET.DataController = function () {
 		initializeSubTable(associatedDataTableColumn);
 		initializeContextMenu(data, associatedDataTableColumn);
 		registerCountByClickHandler();
+		registerHistogramClickHandler();
 	}
 	
 	initialize();
