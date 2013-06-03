@@ -133,9 +133,14 @@ DATATABLEWIDGET.DataController = function () {
 	}
 	
     function initializeContextMenu(data, associatedDataTableColumn) {
-
-		$('#datatable tbody').contextmenu({
+		var rowClicked;
+		$('#datatable tbody tr').contextmenu({
 		    target: '#context-menu',
+		    before: function(e, element) {
+  			    console.log($(element).html());
+   			    rowClicked = element;
+				return true;
+   			},
 		    onItem: function(e, item) {
 			    var selectedOption = $(item).text();
 		    	if (selectedOption === "Color By") {
@@ -143,7 +148,12 @@ DATATABLEWIDGET.DataController = function () {
 				} else if (selectedOption === "Count By" || selectedOption === "Histogram") {
 					columnSelectDialogMode = selectedOption;
 					$('#column-selector-modal').modal();
-				} 
+				} else if (selectedOption === "Hide") {
+					$(rowClicked).hide();
+				} else if (selectedOption === "Show All") {
+					$('#datatable tbody tr').show();
+				}
+				
 		    }
 		 });
 
