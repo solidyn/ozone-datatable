@@ -25,6 +25,7 @@ Sending data to the table
 Data is sent to the table using Ozone intents.
 
 * Add Data
+
 		{
     		action:'addData',
     		dataType:'application/com.solidyn.tabledata'
@@ -32,8 +33,10 @@ Data is sent to the table using Ozone intents.
 		data: {...} // described below
 		
 * Data contains three pieces: rows, columns and style.  Rows and columns are required while style is optional.  Rows represent the actual data items in an array form.  Columns is an array of objects that describe the ordered elements in the row data.  For example, if our data has a number, an animal and an action a row might look like:
+
 		["1", "dog", "runs"]
 The columns for this data would be:
+
 		[
 		    {
 			  "title": "number", "visible": false // causes this column to be hidden by default
@@ -47,13 +50,16 @@ The columns for this data would be:
 		]
 		
 * Style can be passed for the table by passing CSS that will be applied to the table.  For example:
+
 		style: "font-size: 20px"
 
 * If your data has nested values in it, you can add it via associated data.  To do this, add a column to tell the widget that your data has associated data:
+
 		{
 			"type": "associatedData"
 		}
 The data passed in this column value should be a data structure containing rows and columns like regular data.  For example:
+
 		["7", "birds", "squawk", {
 			rows: [
 				["red", "hawk"],
