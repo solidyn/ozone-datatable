@@ -32,7 +32,9 @@ DATATABLEWIDGET.DataController = function () {
 			}
 		],
 		countByPlot,
-		columnSelectDialogMode;
+		columnSelectDialogMode,
+		columns = [],
+		cellClicked;
 
 	function initialize () {
 		OWF.Intents.receive(
@@ -96,7 +98,7 @@ DATATABLEWIDGET.DataController = function () {
 	function populateSelectColumnDiv(div, data, associatedDataTableColumn) {
 		$("#" + div).empty();
 		for (var i = 0; i < data.columns.length; i += 1) {
-			if (i !== associatedDataTableColumn - 1) {
+			if (i !== associatedDataTableColumn - 2) {
 				var columnIndex = associatedDataTableColumn > -1 ? i + 1 : i;
 				$("#" + div).prepend("<label class='radio'><input column='" + columnIndex + "' type='radio' name='column-options' value='" + data.columns[i].title + "'>" + data.columns[i].title + "</label>")	
 			}
@@ -134,31 +136,33 @@ DATATABLEWIDGET.DataController = function () {
 	
     function initializeContextMenu(data, associatedDataTableColumn) {
 		var rowClicked;
-		$('#datatable tbody tr').contextmenu({
+		
+		$('#datatable tbody tr td').contextmenu({
 		    target: '#context-menu',
 		    before: function(e, element) {
-  			    console.log($(element).html());
-   			    rowClicked = element;
+  			    //console.log($(element).closest("tr").html());
+   			    rowClicked = $(element).closest("tr");
+				cellClicked = element;
 				return true;
    			},
 		    onItem: function(e, item) {
 			    var selectedOption = $(item).text();
 		    	if (selectedOption === "Color By") {
+					populateColorByDialog(data, associatedDataTableColumn);
 					$('#color-by-modal').modal();
 				} else if (selectedOption === "Count By" || selectedOption === "Histogram") {
+					populateSelectColumnDiv("column-selector", data, associatedDataTableColumn); 
 					columnSelectDialogMode = selectedOption;
 					$('#column-selector-modal').modal();
 				} else if (selectedOption === "Hide") {
 					$(rowClicked).hide();
 				} else if (selectedOption === "Show All") {
 					$('#datatable tbody tr').show();
-				}
-				
+				} else if (selectedOption === "Precision") {
+					$('#precision-selector-modal').modal();
+				}			
 		    }
 		 });
-
-		 populateColorByDialog(data, associatedDataTableColumn);
-		 populateSelectColumnDiv("column-selector", data, associatedDataTableColumn); 
 	}
 	
 	function appyColorBinsToColumn(columnTitle) {
@@ -323,12 +327,61 @@ DATATABLEWIDGET.DataController = function () {
 		});
 	}
 	
+	function registerSetPrecisionClickHandler() {
+		$("#set-precision-button").click(function() {
+			var columnIndex = $(cellClicked).index();
+			var columnTitle = $("#datatable tr th").get(columnIndex).innerHTML,
+			    dataIndex = -1;
+
+			var precision = $("#precision").val();
+
+			for (var i = 0; i < columns.length; i += 1) {
+				if (columns[i].sTitle === columnTitle) {
+					dataIndex = i;
+					break;
+				}
+			}
+			if (dataIndex !== -1) {
+				$("#datatable tbody").find('tr').each(function () {
+					var id = dataTable.fnGetData(this, 0),
+					    originalValue = null;
+
+					// find the original value in displayedData
+					for (var i = 0; i < displayedData.length; i += 1) {
+						if (displayedData[i][0] === id) {
+							originalValue = displayedData[i][dataIndex];
+							break;
+						}
+					}
+					if(typeof(originalValue) === "number") {
+						// adjust it for precision
+						var decimalPrecision = Math.pow(10, precision);
+						var newValue = Math.round(originalValue * decimalPrecision) / decimalPrecision;
+
+						// set it into the right spot in the datatable using fnUpdate
+						dataTable.fnUpdate(newValue, this, dataIndex);
+					}
+				});	
+			}
+		});
+	
+	}
+	
+	
+	function addHiddenIdColumn (data) {
+		for (var i = 0; i < data.length; i += 1) {
+			data[i].unshift(i);
+		}
+		return data;
+	}
+	
 	function addData (data) {
 		var i,
-            columns = [],
 			handleAssociatedData = false,
 			massagedData = data.rows,
 			associatedDataTableColumn = -1;
+			
+			columns = [];
 		
 		// Remove all data in the table
         $("#no-data").hide();
@@ -351,8 +404,11 @@ DATATABLEWIDGET.DataController = function () {
 		
 		if (handleAssociatedData) {
 			massagedData = adjustForAssociatedData(massagedData, associatedDataTableColumn);
-			associatedDataTableColumn += 1;
+			associatedDataTableColumn += 2;
 		}
+		
+		massagedData = addHiddenIdColumn(massagedData);
+		columns.unshift({"sTitle" : "_id", "bVisible": false});
 		
 		displayedData = massagedData;
 
@@ -383,6 +439,7 @@ DATATABLEWIDGET.DataController = function () {
 		initializeContextMenu(data, associatedDataTableColumn);
 		registerCountByClickHandler();
 		registerHistogramClickHandler();
+		registerSetPrecisionClickHandler();
 	}
 	
 	initialize();

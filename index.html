@@ -18,6 +18,7 @@ title:
 			<li><a tabindex="-1" href="#">Histogram</a></li>
 			<li><a tabindex="-1" href="#">Hide</a></li>
 			<li><a tabindex="-1" href="#">Show All</a></li>
+			<li><a tabindex="-1" href="#">Precision</a></li>
 		</ul>
 	</div>
 	
@@ -65,5 +66,21 @@ title:
 		<div class="modal-footer">
 		    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		    <button id="color-by-button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Select</button>
+		</div>
+	</div>
+	
+	<div id="precision-selector-modal" class="modal hide fade">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			    <h3>Select Precision</h3>
+		</div>
+		
+		<div class="modal-body">
+			<input type="number" id="precision" value="10"></input>Decimal Places
+		</div>
+		
+		<div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		    <button id="set-precision-button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Set Precision</button>
 		</div>
 	</div>

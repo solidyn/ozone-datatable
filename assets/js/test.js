@@ -3,11 +3,11 @@ OWF.ready(function() {
 		$("#add-data").on("click", function() {
 			var data = {
 			  rows: [
-			    ["1", "dog", "runs"],
-			    ["2", "cats", "purrs"],
-				["5", "cats", "scratch"],
-				["9", "reptiles", "<a href='http://google.com' target='_blank'>hiss<a>"],
-			    ["7", "birds", "squawk", {
+			    ["1", "dog", "runs", 0.717456],
+			    ["2", "cats", "purrs", 0.424564],
+				["5", "cats", "scratch", 0.43234584],
+				["9", "reptiles", "<a href='http://google.com' target='_blank'>hiss<a>", 0.0100292],
+			    ["7", "birds", "squawk", 1.023948, {
 					rows: [
 						["red", "hawk"],
 						["blue", "jay"],
@@ -37,6 +37,9 @@ OWF.ready(function() {
 				{
 			      "title": "action"
 			    },
+				{
+				  "title": "average height"
+				},
 				{
 				  "type": "associatedData"
 				}
