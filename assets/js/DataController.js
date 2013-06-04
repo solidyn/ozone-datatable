@@ -84,7 +84,7 @@ DATATABLEWIDGET.DataController = function () {
 				}
 				
 				$("#details_" + id).dataTable({
-					"aaData": displayedData[id][associatedDataTableColumn].data,
+					"aaData": displayedData[id][associatedDataTableColumn].rows,
 					"aoColumns": subTableColumns,
 					"sDom": 'C<"clear">Rlfrtip',
 					"sPaginationType": "bootstrap"
@@ -327,7 +327,7 @@ DATATABLEWIDGET.DataController = function () {
 		var i,
             columns = [],
 			handleAssociatedData = false,
-			massagedData = data.data,
+			massagedData = data.rows,
 			associatedDataTableColumn = -1;
 		
 		// Remove all data in the table
