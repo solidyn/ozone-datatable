@@ -428,6 +428,11 @@ DATATABLEWIDGET.DataController = function () {
 						"aButtons":    [ "csv", "xls", "pdf" ]
 					}
 				]
+			},
+			"oColVis" : {
+				"fnStateChange": function ( iColumn, bVisible) {
+					initializeContextMenu(data, associatedDataTableColumn);	
+				}
 			}
         });
 

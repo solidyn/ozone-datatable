@@ -82,4 +82,10 @@ The data passed in this column value should be a data structure containing rows 
 
 Interacting with the table
 --------------------------
-Most of the functions of the table are self-explanatory including pagination, showing/hiding columns, copying, printing and saving table contents.  By right-clicking on the table you can also access the color-by, count-by and histogram functions.  These functions allow you to select which column to perform the operation on.
+Most of the functions of the table are self-explanatory including pagination, showing/hiding columns, copying, printing and saving table contents.  
+
+* Context Menu
+Right-clicking on the table you can also access the color-by, count-by and histogram functions.  These functions allow you to select which column to perform the operation on.
+
+* Multi-column sort
+You can sort multiple columns by holding down shift while clicking on the table header after having sorted on a column already.
